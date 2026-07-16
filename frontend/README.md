@@ -19,7 +19,7 @@ cp .env.example .env
 ```
 
 ### Développement
-
+s
 ```bash
 cd frontend
 npm run dev
