@@ -1,4 +1,4 @@
-FROM node:24-alpine AS build
+FROM dhi.io/node:24-debian13-dev AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 RUN npm run build
 
-FROM cgr.dev/chainguard/node:latest AS prod
+FROM dhi.io/node:24-debian13 AS prod
 
 WORKDIR /app
 
