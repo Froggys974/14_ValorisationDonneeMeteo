@@ -1,0 +1,173 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - main
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install dependencies
+        run: npm run install:backend
+
+      - name: Lint report (JSON)
+        if: always()
+        continue-on-error: true
+        run: npm run lint:backend:report
+
+      - name: Lint
+        run: npm run lint:backend
+
+      - name: Test
+        run: npm run test:backend
+
+      - name: Upload backend reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-reports
+          path: |
+            backend/backend-test-report.xml
+            backend/backend-lint-report.json
+          retention-days: 14
+
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        run: npm run install:frontend
+
+      - name: Lint report (JSON)
+        if: always()
+        continue-on-error: true
+        run: npm run lint:frontend:report
+
+      - name: Lint
+        run: npm run lint:frontend
+
+      - name: Test
+        run: npm run test:frontend
+
+      - name: Upload frontend reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-reports
+          path: |
+            frontend/frontend-test-report.xml
+            frontend/frontend-lint-report.json
+          retention-days: 14
+
+  security-scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trivy scan (report)
+        if: always()
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: json
+          output: trivy-fs-report.json
+          severity: CRITICAL,HIGH
+
+      - name: Generate VEX document
+        if: always()
+        env:
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          test -f trivy-fs-report.json || echo '{"Results":[]}' > trivy-fs-report.json
+          jq -n \
+            --slurpfile trivy trivy-fs-report.json \
+            --arg author "CI (Trivy) - $REPO" \
+            --arg id "https://github.com/$REPO/actions/runs/$RUN_ID" \
+            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              "@context": "https://openvex.dev/ns/v0.2.0",
+              "@id": $id,
+              author: $author,
+              timestamp: $ts,
+              version: 1,
+              statements: [
+                ($trivy[0].Results // [])[] as $r
+                | ($r.Vulnerabilities // [])[]
+                | {
+                    vulnerability: {name: .VulnerabilityID},
+                    products: [{
+                      "@id": ("pkg:generic/" + $r.Target),
+                      subcomponents: [{"@id": ((.PkgIdentifier.PURL // .PkgID) // .PkgName)}]
+                    }],
+                    status: "under_investigation",
+                    impact_statement: ("Detected by Trivy (" + .Severity + ") in " + $r.Target + "; triage pending.")
+                  }
+              ]
+            }' > vex.json
+
+      - name: Trivy scan (gate)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            trivy-fs-report.json
+            vex.json
+          retention-days: 14
+
+  build:
+    needs: [backend, frontend, security-scan]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/14_valorisationdonneemeteo-backend:latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/14_valorisationdonneemeteo-frontend:latest
