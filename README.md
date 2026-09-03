@@ -1,8 +1,9 @@
 # Valorisation Donnée Météo
 
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Froggys974/14_ValorisationDonneeMeteo/badge)](https://scorecard.dev/viewer/?uri=github.com/Froggys974/14_ValorisationDonneeMeteo)
-
+[![Lint](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/pre-commit.yaml)
+[![Tests](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci-testing.yml/badge.svg)](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci-testing.yml)
 [![CI](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci.yml/badge.svg)](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Froggys974/14_ValorisationDonneeMeteo/badge)](https://scorecard.dev/viewer/?uri=github.com/Froggys974/14_ValorisationDonneeMeteo)
 
 Projet Data For Good - Saison 14
 
