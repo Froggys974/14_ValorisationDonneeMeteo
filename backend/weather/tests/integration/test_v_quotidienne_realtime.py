@@ -198,14 +198,14 @@ def test_v_quotidienne_realtime_infrahoraire_coexists_with_htr():
 
 
 def test_v_quotidienne_realtime_uses_horaire_for_older_data():
-    """Donnée 3 jours en arrière (hors fenêtre HTR) : vient de la table `Horaire`."""
-    three_days_ago = _utc_today() - dt.timedelta(days=3)
-    insert_horaire(STATION, _at(three_days_ago, 12), tn=2.0, tx=12.0)
+    """Donnée ~4 jours en arrière (hors fenêtre HTR) : vient de la table `Horaire`."""
+    four_days_ago = _utc_today() - dt.timedelta(days=4)
+    insert_horaire(STATION, _at(four_days_ago, 12), tn=2.0, tx=12.0)
 
     rows = fetch_v_quotidienne_realtime(station_code=STATION)
 
     assert len(rows) == 1
-    assert rows[0]["date"].date() == three_days_ago
+    assert rows[0]["date"].date() == four_days_ago
     assert float(rows[0]["tn"]) == pytest.approx(2.0)
     assert float(rows[0]["tx"]) == pytest.approx(12.0)
 
@@ -213,15 +213,15 @@ def test_v_quotidienne_realtime_uses_horaire_for_older_data():
 def test_v_quotidienne_realtime_combines_htr_and_horaire_across_days():
     """Deux jours via deux sources différentes → 2 lignes dans la vue."""
     yesterday = _yesterday()
-    three_days_ago = _utc_today() - dt.timedelta(days=3)
+    four_days_ago = _utc_today() - dt.timedelta(days=4)
 
     insert_horaire_temps_reel(STATION, _at(yesterday, 12), tn=5.0, tx=15.0)
-    insert_horaire(STATION, _at(three_days_ago, 12), tn=2.0, tx=12.0)
+    insert_horaire(STATION, _at(four_days_ago, 12), tn=2.0, tx=12.0)
 
     rows = fetch_v_quotidienne_realtime(station_code=STATION)
 
     assert len(rows) == 2
-    assert rows[0]["date"].date() == three_days_ago
+    assert rows[0]["date"].date() == four_days_ago
     assert rows[1]["date"].date() == yesterday
 
 
@@ -314,15 +314,13 @@ def test_v_quotidienne_realtime_filters_day_with_only_tx():
     assert rows == []
 
 
-def test_v_quotidienne_realtime_excludes_data_older_than_3_days():
+def test_v_quotidienne_realtime_excludes_data_older_than_4_days():
     """
-    Donnée à 4 jours dans le passé (encore dans la fenêtre Horaire), mais la
-    journée agrégée tombe avant `date_trunc('day', now()) - 3 jours` et la
-    lecture elle-même est antérieure à `now() - 4j + 18h` pour la tn
-    (et `- 3j + 6h` pour la tx) → exclue.
+    Donnée à 5 jours dans le passé : hors de la fenêtre de la source `Horaire`
+    elle-même (`AAAAMMJJHH >= date_trunc('day', now()) - 4 jours`) → exclue.
     """
-    four_days_ago = _utc_today() - dt.timedelta(days=4)
-    insert_horaire(STATION, _at(four_days_ago, 12), tn=2.0, tx=12.0)
+    five_days_ago = _utc_today() - dt.timedelta(days=5)
+    insert_horaire(STATION, _at(five_days_ago, 12), tn=2.0, tx=12.0)
 
     rows = fetch_v_quotidienne_realtime(station_code=STATION)
 

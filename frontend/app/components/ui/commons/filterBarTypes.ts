@@ -1,8 +1,5 @@
 export type FilterType =
-    | "string"
-    | "string-async"
-    | "date-range"
-    | "number-range";
+    "string" | "string-async" | "date-range" | "number-range";
 
 export interface FilterField {
     id: string;
@@ -24,6 +21,4 @@ export type RangeFilterValue = {
 };
 export type DateFilterValue = { type: "date-range"; min?: Date; max?: Date };
 export type FilterValue =
-    | StringFilterValue
-    | RangeFilterValue
-    | DateFilterValue;
+    StringFilterValue | RangeFilterValue | DateFilterValue;
