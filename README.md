@@ -4,6 +4,13 @@
 
 Projet Data For Good - Saison 14
 
+## Aperçu — CI & Monitoring
+
+| CI/CD | Prometheus | Grafana |
+|---|---|---|
+| [![Checks CI](docs/screenshots/ci-checks.png)](docs/screenshots/ci-checks.png) | [![Targets Prometheus](docs/screenshots/prometheus-targets.png)](docs/screenshots/prometheus-targets.png) | [![Dashboard Grafana](docs/screenshots/grafana-dashboard.png)](docs/screenshots/grafana-dashboard.png) |
+| Pipeline complet (tests, lint, scan sécurité, build) vert sur la PR | Cibles `backend` et `prometheus` scrapées avec succès (`UP`) | Dashboard "Backend - Vue d'ensemble" : requêtes/sec, latence, mémoire, CPU |
+
 ## Structure du projet
 
 ```
