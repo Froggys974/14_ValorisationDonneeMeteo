@@ -54,98 +54,100 @@ def setup_db_schema_and_views(django_db_setup, django_db_blocker):
     """
     Crée les tables sources + views dans la DB de test.
     """
-    schema_sql = (BASE_DIR / "sql" / "schemas" / "001_source_tables.sql").read_text()
+    schema_sql = (BASE_DIR / "sql" / "schemas" / "001_source_tables.sql").read_text(
+        encoding="utf-8"
+    )
     ref_department_region_sql = (
         BASE_DIR / "sql" / "tables" / "001_table_ref_department_region.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_station_qualifiee_hexagone_sql = (
         BASE_DIR / "sql" / "views" / "200_001_v_station_qualifiee_hexagone.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_quotidienne_realtime_sql = (
         BASE_DIR / "sql" / "materialized_views" / "300_001_v_quotidienne_realtime.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_quotidienne = (
         BASE_DIR / "sql" / "views" / "310_002_v_quotidienne.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_mensuelle_realtime_sql = (
         BASE_DIR / "sql" / "materialized_views" / "320_003_v_mensuelle_realtime.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_station_classe_1234 = (
         BASE_DIR / "sql" / "views" / "210_003_v_station_classe_1234.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_station_classe_123_sql = (
         BASE_DIR / "sql" / "views" / "220_004_v_station_classe_123.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_station_deviation_sql = (
         BASE_DIR / "sql" / "views" / "500_005_v_station_deviation.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_station_records_sql = (
         BASE_DIR / "sql" / "views" / "400_006_v_station_records.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_quotidienne_deviation = (
         BASE_DIR / "sql" / "views" / "510_008_v_quotidienne_deviation.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     baseline_station_table_sql = (
         BASE_DIR
         / "sql"
         / "test_tables"
         / "520_mv_baseline_station_daily_mean_1991_2020.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     itn_baseline_tables_sql = (
         BASE_DIR
         / "sql"
         / "test_tables"
         / "640_004_v_itn_baseline_monthly_1991_2020.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_itn_daily_all_years_with_feb29_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "itn"
         / "720_007_v_itn_daily_all_years_with_feb29.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_itn_absolute_extremes_daily_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "itn"
         / "730_008_v_itn_absolute_extremes_daily.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_itn_absolute_extremes_monthly_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "itn"
         / "740_009_v_itn_absolute_extremes_monthly.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_itn_absolute_extremes_yearly_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "itn"
         / "750_010_v_itn_absolute_extremes_yearly.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_records_absolus_par_saison_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "records"
         / "430_004_v_records_absolus_par_saison.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_records_absolus_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "records"
         / "440_005_v_records_absolus.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
     v_records_absolus_par_type_sql = (
         BASE_DIR
         / "sql"
         / "materialized_views"
         / "records"
         / "450_006_v_records_absolus_par_type.sql"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
     with django_db_blocker.unblock():
         with connection.cursor() as cur:

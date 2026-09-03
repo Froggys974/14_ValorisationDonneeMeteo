@@ -1,0 +1,42 @@
+{
+    "name": "14_valorisationdonneemeteo",
+    "version": "1.0.0",
+    "description": "[![CI](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci.yml/badge.svg)](https://github.com/Froggys974/14_ValorisationDonneeMeteo/actions/workflows/ci.yml)",
+    "main": "index.js",
+    "scripts": {
+        "up:dev": "docker compose -f docker-compose.dev.yml up -d --build",
+        "up:monitoring": "docker compose -f docker-compose.monitoring.yml up -d",
+        "up:all": "npm run up:dev && npm run up:monitoring",
+        "down": "docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml down",
+        "down:volumes": "docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml down -v",
+        "logs": "docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml logs -f",
+        "ps": "docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml ps",
+        "db-seed": "cd backend/timescaledb-env && docker compose run --rm db-seed",
+
+        "install:backend": "cd backend && uv sync",
+        "install:frontend": "cd frontend && npm ci --legacy-peer-deps",
+        "install": "npm run install:backend && npm run install:frontend",
+
+        "lint:backend": "cd backend && uv run ruff check .",
+        "lint:backend:report": "cd backend && uv run ruff check . --output-format=json --output-file=backend-lint-report.json",
+        "lint:frontend": "cd frontend && npm run lint",
+        "lint:frontend:report": "cd frontend && npx eslint --ext .js,.ts,.vue . --format json --output-file frontend-lint-report.json",
+        "lint": "npm run lint:backend && npm run lint:frontend",
+
+        "test:backend": "cd backend && uv run pytest weather/tests/unit --junitxml=backend-test-report.xml",
+        "test:frontend": "cd frontend && npm run test:ci",
+        "test": "npm run test:backend && npm run test:frontend"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Froggys974/14_ValorisationDonneeMeteo.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/Froggys974/14_ValorisationDonneeMeteo/issues"
+    },
+    "homepage": "https://github.com/Froggys974/14_ValorisationDonneeMeteo#readme"
+}
