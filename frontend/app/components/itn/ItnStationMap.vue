@@ -75,8 +75,7 @@ function setStationsData(stations: ItnStation[]) {
     }
 
     const source = map.getSource("stations-itn") as
-        | maplibregl.GeoJSONSource
-        | undefined;
+        maplibregl.GeoJSONSource | undefined;
 
     source?.setData(stationsToGeoJSON(stations));
 }

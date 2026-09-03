@@ -119,8 +119,7 @@ function stationsToGeoJSON(
 function setStationsData(stations: MappableStation[]) {
     if (!map) return;
     const source = map.getSource("stations") as
-        | maplibregl.GeoJSONSource
-        | undefined;
+        maplibregl.GeoJSONSource | undefined;
     source?.setData(stationsToGeoJSON(stations));
 }
 
