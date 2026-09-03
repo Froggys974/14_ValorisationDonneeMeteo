@@ -314,15 +314,13 @@ def test_v_quotidienne_realtime_filters_day_with_only_tx():
     assert rows == []
 
 
-def test_v_quotidienne_realtime_excludes_data_older_than_3_days():
+def test_v_quotidienne_realtime_excludes_data_older_than_4_days():
     """
-    Donnée à 4 jours dans le passé (encore dans la fenêtre Horaire), mais la
-    journée agrégée tombe avant `date_trunc('day', now()) - 3 jours` et la
-    lecture elle-même est antérieure à `now() - 4j + 18h` pour la tn
-    (et `- 3j + 6h` pour la tx) → exclue.
+    Donnée à 5 jours dans le passé : hors de la fenêtre de la source `Horaire`
+    elle-même (`AAAAMMJJHH >= date_trunc('day', now()) - 4 jours`) → exclue.
     """
-    four_days_ago = _utc_today() - dt.timedelta(days=4)
-    insert_horaire(STATION, _at(four_days_ago, 12), tn=2.0, tx=12.0)
+    five_days_ago = _utc_today() - dt.timedelta(days=5)
+    insert_horaire(STATION, _at(five_days_ago, 12), tn=2.0, tx=12.0)
 
     rows = fetch_v_quotidienne_realtime(station_code=STATION)
 

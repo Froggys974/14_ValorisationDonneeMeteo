@@ -47,7 +47,7 @@ tn_quotidienne_temps_reel AS (
         date_trunc('day', timestamp - interval '18 hours' - interval '1 second') + interval '1 day' AS timestamp,
         MIN(tn)                                                                                     AS tn
     FROM combined_horaire
-    WHERE timestamp > date_trunc('day', now()) - interval '4 days' + interval '18 hours'
+    WHERE timestamp > date_trunc('day', now()) - interval '5 days' + interval '18 hours'
     GROUP BY station_id, date_trunc('day', timestamp - interval '18 hours' - interval '1 second') + interval '1 day'
 ),
 
@@ -57,7 +57,7 @@ tx_quotidienne_temps_reel AS (
         date_trunc('day', timestamp - interval '6 hours' - interval '1 second') AS timestamp,
         MAX(tx)                                                                 AS tx
     FROM combined_horaire
-    WHERE timestamp > date_trunc('day', now()) - interval '3 days' + interval '6 hours'
+    WHERE timestamp > date_trunc('day', now()) - interval '4 days' + interval '6 hours'
     GROUP BY station_id, date_trunc('day', timestamp - interval '6 hours' - interval '1 second')
 ),
 
@@ -75,7 +75,7 @@ quotidienne_temps_reel AS (
         MIN(tn)                   AS tn,
         MAX(tx)                   AS tx
     FROM tn_tx_quotidienne_temps_reel
-    WHERE timestamp >= date_trunc('day', now()) - interval '3 days'
+    WHERE timestamp >= date_trunc('day', now()) - interval '4 days'
     GROUP BY station_id, timestamp
 )
 
